@@ -1,0 +1,13 @@
+name: Gugor
+version: '${project.version}'
+main: gugor.gugor.Gugor
+api-version: 1.19
+commands:
+  waypoint:
+    description: Gugors Waypoint System.
+    usage: /<command> [ help | get <name> | getall | set <name> <?x> <?y> <?z> | delete ]
+    aliases:
+      - wp
+  verify:
+    description: Verify with Discord Account
+    usage: /verify

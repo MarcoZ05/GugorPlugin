@@ -43,12 +43,16 @@ public class waypoint implements TabExecutor {
       }  else if(Objects.equals(args[0],"getall")) {
         // waypoint getall
         getall.main(p, args);
-      } else if(Objects.equals(args[0],"track") && args.length >= 2) {
+      } else if(Objects.equals(args[0],"track")) {
+        if(args.length >= 2){
         // waypoint getall
         try {
           track.main(p, args[1]);
         } catch (ReflectiveOperationException e) {
           throw new RuntimeException(e);
+        }
+        }else{
+          track.stopTracking();
         }
       } else {
         error.main(p, args);
@@ -89,7 +93,9 @@ public class waypoint implements TabExecutor {
         if(args.length == 3){
           return List.of("<?x>");
         }
+        if(args.length == 2){
         return List.of("<name>");
+        }
       }
     }
     List<String> argsList = new java.util.ArrayList<>(List.of("get", "getall", "set", "help", "track", "delete"));

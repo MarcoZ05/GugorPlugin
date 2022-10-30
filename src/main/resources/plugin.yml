@@ -4,10 +4,17 @@ main: gugor.gugor.Gugor
 api-version: 1.19
 commands:
   waypoint:
-    description: Gugors Waypoint System.
-    usage: /<command> [ help | get <name> | getall | set <name> <?x> <?y> <?z> | delete ]
+    description: Gugors Waypoint System
+    usage: /<command> [ help | get <wpName> | getall | set <wpName> <?x> <?y> <?z> | delete | track ]
     aliases:
       - wp
-  verify:
-    description: Verify with Discord Account
-    usage: /verify
+  ping:
+    description: Shows the ping of a Player
+    usage: /ping [  | help | <name> ]
+    aliases:
+      - p
+  stats:
+    description: Helps the Player
+    usage: /stats <playerName> <?statistic>
+    aliases:
+      - s

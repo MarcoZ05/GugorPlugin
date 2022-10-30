@@ -1,11 +1,11 @@
 package gugor.gugor.commands.waypoint;
 
-import gugor.gugor.commands.waypoint.waypoint_api.api;
+import gugor.gugor.api;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.json.JSONArray;
 
 import java.io.IOException;
@@ -14,50 +14,52 @@ import java.util.List;
 import java.util.Objects;
 
 public class waypoint implements TabExecutor {
-  public static Plugin plugin;
-  public waypoint(Plugin plugin){
-    waypoint.plugin = plugin;
-  }
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     if(sender instanceof Player){
       // if sender is a player
       Player p = (Player) sender;
 
-      if(args.length == 0 || Objects.equals(args[0], "help")){
-        // help statement if no argument or help argument
-        help.main(p);
-      } else if(Objects.equals(args[0], "set") && args.length >= 2){
-        // set a waypoint
-        set.main(p,args);
-      } else if (Objects.equals(args[0], "get") && args.length >= 2) {
-        // waypoint get <name>
-        get.main(p, args[1]);
-      } else if(Objects.equals(args[0],"delete") && args.length >= 2){
-        // waypoint delete <name>
-        try {
-          delete.main(p, args[1]);
-        } catch (IOException | URISyntaxException e) {
-          throw new RuntimeException(e);
+      switch (args[0]){
+        case "help":
+          help.main(p);
+          break;
+        case "getall":
+          getall.main(p);
+          break;
+        case "track":
+          track.main(p,args);
+          break;
+        case "set":
+          if(args.length >= 2){
+            set.main(p,args);
+          }else{
+            p.sendMessage("<Gugur>" + ChatColor.RED + " Dieser Befehl benötigt mindestens 2 Argumente!");
+          }
+          break;
+        case "get":
+          if(args.length >= 2){
+            get.main(p, args[1]);
+          }else{
+            p.sendMessage("<Gugur>" + ChatColor.RED + " Dieser Befehl benötigt 2 Argumente!");
+          }
+          break;
+        case "delete":
+          if(args.length >= 2){
+            try {
+              delete.main(p, args[1]);
+            } catch (IOException | URISyntaxException | InterruptedException e) {
+              throw new RuntimeException(e);
+            }
+          }else{
+            p.sendMessage("<Gugur>" + ChatColor.RED + " Dieser Befehl benötigt 2 Argumente!");
+          }
+          break;
+        default:
+          error.main(p, args);
+          break;
         }
-      }  else if(Objects.equals(args[0],"getall")) {
-        // waypoint getall
-        getall.main(p, args);
-      } else if(Objects.equals(args[0],"track")) {
-        if(args.length >= 2){
-        // waypoint getall
-        try {
-          track.main(p, args[1]);
-        } catch (ReflectiveOperationException e) {
-          throw new RuntimeException(e);
-        }
-        }else{
-          track.stopTracking();
-        }
-      } else {
-        error.main(p, args);
       }
-    }
     return true;
   }
 
@@ -65,7 +67,7 @@ public class waypoint implements TabExecutor {
   public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
     if(args.length > 1){
       if(List.of("get", "delete", "track").contains(args[0])){
-        JSONArray wps = api.get_all();
+        JSONArray wps = api.get_waypoints();
         List<String> wpNames = new java.util.ArrayList<>(List.of());
         for (int i = 0; i < wps.length(); i++){
           wpNames.add(String.valueOf(wps.getJSONObject(i).getString("name")));
@@ -82,7 +84,7 @@ public class waypoint implements TabExecutor {
       }
       if(Objects.equals(args[0], "set")){
         if(args.length == 6){
-          return List.of("<?dimension>");
+          return List.of("overworld","nether","end");
         }
         if(args.length == 5){
           return List.of("<?z>");
@@ -98,13 +100,10 @@ public class waypoint implements TabExecutor {
         }
       }
     }
-    List<String> argsList = new java.util.ArrayList<>(List.of("get", "getall", "set", "help", "track", "delete"));
-    for (int i = 0; i < argsList.size(); i++) {
-      if(!argsList.get(i).contains(args[0])){
-        argsList.remove(i);
-      }
+    if(args.length < 2){
+      return List.of("get", "getall", "set", "help", "track", "delete");
     }
-    return argsList;
+    return null;
   }
 }
 

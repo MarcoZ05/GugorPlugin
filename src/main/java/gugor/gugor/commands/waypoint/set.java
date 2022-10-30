@@ -1,6 +1,6 @@
 package gugor.gugor.commands.waypoint;
 
-import gugor.gugor.commands.waypoint.waypoint_api.api;
+import gugor.gugor.api;
 import gugor.gugor.location;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -20,9 +20,9 @@ public class set {
         String dimension = args.length < 6 ? location.getDimension(p) : args[5];
         try {
             // post the information and message in the chat
-            api.post(name,x,y,z,dimension);
+            api.post_waypoint(name,x,y,z,dimension);
             p.sendMessage("<Gugor> The waypoint " + ChatColor.YELLOW + name + ChatColor.WHITE + " got placed " + ChatColor.GREEN + "[" + x + ", " + y + ", " + z + ", " + dimension + "]");
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
